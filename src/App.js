@@ -1,24 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import { Route, Routes } from "react-router-dom";
+import "./App.css";
+import DashLayout from "./Common/DashLayout";
+import Layout from "./Common/Layout";
+import CategoriesPage from "./Views/Products/Report/CategoriesPage";
+import Homepage from "./Views/Systems/Homepage";
+import ProductPage from "./Views/Products/ProductPage";
+import GroupProductsPage from "./Views/Products/Report/GroupProductsPage";
+import UnitsPage from "./Views/Products/Report/UnitsPage";
+import Login from "./Views/Login/Login";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Login />} />
+        {/* Start dash route */}
+        <Route path="dash" element={<DashLayout />}>
+          <Route index element={<Homepage />} />
+          <Route path="san-pham">
+            <Route index element={<ProductPage />} />
+            <Route path="categories" element={<CategoriesPage />} />
+            <Route path="groups-product" element={<GroupProductsPage />} />
+            <Route path="unit" element={<UnitsPage />} />
+          </Route>
+        </Route>
+        {/* End dash route */}
+      </Route>
+    </Routes>
   );
 }
 
