@@ -5,7 +5,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 
-export const productSiderItems = [
+export const systemSiderItems = [
   {
     key: "/user-infor",
     icon: React.createElement(UserOutlined),
@@ -20,9 +20,8 @@ export const productSiderItems = [
     icon: React.createElement(LaptopOutlined),
     label: "Các chức năng chính",
     children: [
-      { key: "/sale", label: "Khuyến mãi" },
-      { key: "/price-board", label: "Bảng giá" },
-      { key: "/product", label: "Sản phẩm" },
+      { key: "/dash/he-thong/phan-quyen", label: "Phân quyền" },
+      { key: "/dash/he-thong/nguoi-dung", label: "Người dùng" },
     ],
   },
   {
@@ -35,5 +34,15 @@ export const productSiderItems = [
       { key: "/dash/san-pham/unit", label: "Đơn vị tính" },
     ],
   },
+  {
+    key: "/catalog",
+    icon: React.createElement(NotificationOutlined),
+    label: "Danh mục",
+    children: [
+      { key: "/dash/he-thong/thong-so-he-thong", label: "Thông số hệ thống" },
+      { key: "/dash/he-thong/thanh-pho", label: "Tỉnh, thành phố" },
+      { key: "/dash/he-thong/quan-huyen", label: "Quận, huyện" },
+    ],
+  },
 ];
-export const openKeys = ["/report", "/main-funtion"];
+export const openKeys = ["/catalog", "/report", "/main-funtion"];

@@ -1,0 +1,25 @@
+.search-authorities-container{
+    .mt-2{
+        margin-top: 10px;
+    }
+}
+.btn-authorities-container{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    .btn-container{
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+    .setting-container{
+        font-size: xx-large;
+        cursor: pointer;
+
+    }
+}
+.table-authorities-container{
+    margin-top: 20px;
+}

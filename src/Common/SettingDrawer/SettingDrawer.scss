@@ -1,0 +1,8 @@
+.option-search,.option-table-result{
+    >span{
+        font-size: large;
+    }
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
