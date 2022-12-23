@@ -14,12 +14,7 @@ function Homepage() {
       }}
     >
       <BreadcrumbCommon item={breadcrumbItem} />
-      <Layout
-        className="site-layout-background"
-        style={{
-          padding: "24px 0",
-        }}
-      >
+      <Layout className="site-layout-background">
         <SiderCommon
           item={systemSiderItems}
           widthRequest="250"

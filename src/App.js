@@ -8,7 +8,8 @@ import ProductPage from "./Views/Products/ProductPage";
 import GroupProductsPage from "./Views/Products/Report/GroupProductsPage";
 import UnitsPage from "./Views/Products/Report/UnitsPage";
 import Login from "./Views/Login/Login";
-import AuthoritiesPage from "./Views/Systems/MainFuntion/Authorities/AuthoritiesPage";
+import UserPage from "./Views/Systems/MainFuntion/User/Page/UserPage";
+import AuthoritiesPage from "./Views/Systems/MainFuntion/Authorities/AuthoritiesPage/AuthoritiesPage";
 function App() {
   return (
     <Routes>
@@ -20,8 +21,7 @@ function App() {
           <Route path="he-thong">
             <Route index element={<Homepage />} />
             <Route path="phan-quyen" element={<AuthoritiesPage />} />
-            <Route path="groups-product" element={<GroupProductsPage />} />
-            <Route path="unit" element={<UnitsPage />} />
+            <Route path="nguoi-dung" element={<UserPage />} />
           </Route>
           <Route path="san-pham">
             <Route index element={<ProductPage />} />

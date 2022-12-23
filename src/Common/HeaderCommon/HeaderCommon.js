@@ -2,14 +2,10 @@ import React, { useState } from "react";
 import { Layout, Menu } from "antd";
 import { useNavigate } from "react-router-dom";
 import "./HeaderCommon.scss";
+import { Modules } from ".";
+
 const { Header } = Layout;
 
-const items = [
-  { label: "Hệ thống", key: "/dash" },
-  { label: "Sản phẩm", key: "/dash/san-pham" },
-  { label: "Bán hàng" },
-  { label: "Dự án" },
-];
 function HeaderCommon() {
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState();
@@ -19,11 +15,11 @@ function HeaderCommon() {
   };
 
   return (
-    <Header className="header">
+    <Header className="header header-container">
       <Menu
         theme="dark"
         mode="horizontal"
-        items={items}
+        items={Modules}
         selectedKeys={selectedItem}
         defaultSelectedKeys="/dash"
         onClick={({ key }) => handleChangeNaviga(key)}

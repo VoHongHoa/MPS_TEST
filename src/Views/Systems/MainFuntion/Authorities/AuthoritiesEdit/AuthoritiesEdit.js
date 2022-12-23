@@ -1,6 +1,6 @@
 import { Col, Form, Input, Modal, notification, Row } from "antd";
-import React, { useCallback, useEffect, useState } from "react";
-import { updateRole } from "../../../../Service/Authorities";
+import React, { useEffect, useState } from "react";
+import { updateRole } from "../../../../../Service/Authorities";
 
 const AuthoritiesEdit = (props) => {
   const [api, contextHolder] = notification.useNotification();

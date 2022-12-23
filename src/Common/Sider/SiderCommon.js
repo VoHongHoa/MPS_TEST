@@ -13,7 +13,7 @@ const SiderCommon = (props) => {
       <Menu
         mode="inline"
         style={{
-          height: "100vh",
+          height: "100%",
         }}
         onClick={({ key }) => handleChangeNaviga(key)}
         selectedKeys={props.keyItem}

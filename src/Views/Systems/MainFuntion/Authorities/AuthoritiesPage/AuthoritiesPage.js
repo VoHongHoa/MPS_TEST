@@ -1,32 +1,44 @@
 import { Button, Layout, notification } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { SettingOutlined } from "@ant-design/icons";
-import React, { useEffect, useMemo, useState } from "react";
-import { openKeys, systemSiderItems } from "../..";
-import BreadcrumbCommon from "../../../../Common/BreadcrumbCommon/BreadcrumbCommon";
-import SiderCommon from "../../../../Common/Sider/SiderCommon";
-import TableComponent from "../../../../Common/TableComponent/TableComponent";
-import { deleteRole, getAllRole } from "../../../../Service/Authorities";
-import AuthoritiesAdd from "./AuthoritiesAdd";
-import AuthoritiesEdit from "./AuthoritiesEdit";
+import React, { useMemo, useState } from "react";
+import { openKeys, systemSiderItems } from "../../..";
+import BreadcrumbCommon from "../../../../../Common/BreadcrumbCommon/BreadcrumbCommon";
+import SiderCommon from "../../../../../Common/Sider/SiderCommon";
+import TableComponent from "../../../../../Common/TableComponent/TableComponent";
+import { deleteRole, search } from "../../../../../Service/Authorities";
+import AuthoritiesAdd from "../AuthoritiesAdd";
+import AuthoritiesEdit from "../AuthoritiesEdit/AuthoritiesEdit";
 import "./AuthoritiesPage.scss";
-import SettingDrawer from "../../../../Common/SettingDrawer/SettingDrawer";
-import { columns } from "./Model/model";
-import AuthoritiesSearch from "./AuthoritiesSearch";
-
+import SettingDrawer from "../../../../../Common/SettingDrawer/SettingDrawer";
+import { columns } from "../Model/Model";
+import AuthoritiesSearch from "../AuthoritiesSearch/AuthoritiesSearch";
+import EditPermission from "../AuthoritiesEdit/EditPermission";
+//-----------------------------------Component Start---------------------------------------------
 const AuthoritiesPage = () => {
+  //-------------State----------------
   const breadcrumbItem = ["Hệ thống", "Phân quyền"];
   const [isOpenModalAdd, setIsOpenModalAdd] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [rolesData, setRolesData] = useState([]);
   const [isOpenModalEdit, setIsOpenModalEdit] = useState(false);
-  const [isOpenDrawer, setIsOpenDrawer] = useState(false);
+  const [isOpenDrawer, setIsOpenDrawer] = useState({
+    isOpenDrawerSetting: false,
+    isOpenDrawerPermission: false,
+  });
   const [searchModel, setSearchModel] = useState({
     roleName: "",
-    roleCode: "",
+    roleCode: [],
   });
-  const [api, contextHolder] = notification.useNotification();
   const [action, setAction] = useState("");
+  const [searchOption, setSearchOption] = useState({
+    page: 1,
+    limit: 10,
+  });
+  const [totalDocs, setTotalDocs] = useState(0);
+  //-------State end--------
+  //Notify
+  const [api, contextHolder] = notification.useNotification();
   const openNotification = (type, placement, message) => {
     api[type]({
       message: `Thông báo`,
@@ -34,20 +46,22 @@ const AuthoritiesPage = () => {
       placement,
     });
   };
+  //Onchange SearchModel
   const handleChangeSearchModel = (value) => {
     setSearchModel(value);
   };
-  const handleCancel = () => {
-    setIsOpenModalAdd(false);
-  };
-
-  const handleCancelEdit = () => {
-    setIsOpenModalEdit(false);
-  };
-
+  //Onchange selectedRows
   const handleChooseRow = (rows) => {
     setSelectedRows(rows);
   };
+  //Cancel Modal
+  const handleCancel = () => {
+    setIsOpenModalAdd(false);
+  };
+  const handleCancelEdit = () => {
+    setIsOpenModalEdit(false);
+  };
+  //Delete Data
   const handleDeleteData = async () => {
     try {
       if (selectedRows.length === 0) {
@@ -61,11 +75,10 @@ const AuthoritiesPage = () => {
       if (res && res.status === 200 && res.data.success === true) {
         openNotification("success", "topRight", res.data.message);
         setSelectedRows([]);
-        fetchRoleData();
+        handleSearch();
       } else {
         openNotification("error", "topRight", "Xóa dữ liệu không thành công");
       }
-      console.log(res);
     } catch (e) {
       openNotification("error", "topRight", "Lỗi server");
     }
@@ -74,24 +87,33 @@ const AuthoritiesPage = () => {
     setAction("ADD");
     setIsOpenModalAdd(true);
   };
-  const fetchRoleData = async () => {
-    const res = await getAllRole();
-    if (res.status === 200 && res.data.success === true) {
-      setRolesData(res.data.data);
+  // Seacch Click
+  const handleSearch = async () => {
+    console.log(searchOption);
+    const res = await search({
+      searchOption,
+      searchModel,
+    });
+    if (res && res.status === 200) {
+      setRolesData(res.data.roles);
+      setTotalDocs(res.data.totalDocs);
+    } else {
+      openNotification("error", "topRight", "Lỗi server");
     }
-  };
-  const handleSearch = () => {
-    console.log(searchModel);
   };
   const handleShowFormCopy = () => {
     setAction("COPY");
     if (selectedRows.length !== 1) {
-      openNotification("warning", "topRight", "Vui lòng chọn 1 dòng dữ liệu!");
+      openNotification(
+        "warning",
+        "topRight",
+        "Vui lòng chọn 1 dòng dữ liệu để sao chép!"
+      );
       return;
     }
     setIsOpenModalAdd(true);
   };
-  const handleShowFormEdit = () => {
+  const handleShowFormEdit = async () => {
     if (selectedRows.length !== 1) {
       openNotification(
         "warning",
@@ -115,15 +137,40 @@ const AuthoritiesPage = () => {
     });
   }, [rolesData]);
   const handleOpenDrawer = () => {
-    setIsOpenDrawer(true);
+    setIsOpenDrawer({
+      ...isOpenDrawer,
+      isOpenDrawerSetting: true,
+    });
   };
   const handleCloseDrawer = () => {
-    setIsOpenDrawer(false);
+    setIsOpenDrawer({
+      ...isOpenDrawer,
+      isOpenDrawerSetting: false,
+    });
   };
-  useEffect(() => {}, []);
-  useState(() => {
-    fetchRoleData();
-  }, [rolesData]);
+
+  const handleOpenDrawerPermission = async () => {
+    if (selectedRows.length !== 1) {
+      openNotification(
+        "warning",
+        "topRight",
+        "Chọn 1 dòng dữ liệu để phân quyền!"
+      );
+      return;
+    }
+    setIsOpenDrawer({
+      ...isOpenDrawer,
+      isOpenDrawerPermission: true,
+    });
+  };
+
+  const handleCloseDrawerPermission = () => {
+    setIsOpenDrawer({
+      ...isOpenDrawer,
+      isOpenDrawerPermission: false,
+    });
+  };
+
   return (
     <Content
       style={{
@@ -149,6 +196,7 @@ const AuthoritiesPage = () => {
             <AuthoritiesSearch
               onChange={handleChangeSearchModel}
               seachModel={searchModel}
+              screenName="Authorities"
             />
           </div>
           <div className="btn-authorities-container">
@@ -159,7 +207,7 @@ const AuthoritiesPage = () => {
               <AuthoritiesAdd
                 isOpenModal={isOpenModalAdd}
                 handleCancel={handleCancel}
-                fetchRoleData={fetchRoleData}
+                fetchRoleData={handleSearch}
                 selectedRow={selectedRows}
                 setSelectedRows={setSelectedRows}
                 action={action}
@@ -184,28 +232,35 @@ const AuthoritiesPage = () => {
               <AuthoritiesEdit
                 isOpenModalEdit={isOpenModalEdit}
                 handleCancelEdit={handleCancelEdit}
-                fetchRoleData={fetchRoleData}
+                fetchRoleData={handleSearch}
                 selectedRow={selectedRows}
                 setSelectedRows={setSelectedRows}
               />
-              <Button type="primary" size={"large"}>
+              <Button
+                type="primary"
+                size={"large"}
+                onClick={handleOpenDrawerPermission}
+              >
                 Phân quyền
               </Button>
+              {selectedRows.length === 1 && (
+                <EditPermission
+                  isOpenDrawerPermission={isOpenDrawer.isOpenDrawerPermission}
+                  handleCloseDrawerPermission={handleCloseDrawerPermission}
+                  value={selectedRows}
+                />
+              )}
+
               <Button type="primary" onClick={handleDeleteData} size={"large"}>
                 Xóa
-              </Button>
-              <Button type="primary" size={"large"}>
-                Nhập file
-              </Button>
-              <Button type="primary" size={"large"}>
-                Xuất file
               </Button>
             </div>
             <div className="setting-container">
               <SettingOutlined onClick={handleOpenDrawer} />
               <SettingDrawer
-                isOpenDrawer={isOpenDrawer}
+                isOpenDrawer={isOpenDrawer.isOpenDrawerSetting}
                 handleCloseDrawer={handleCloseDrawer}
+                screenName="Authorities"
                 options={columns}
               />
             </div>
@@ -215,6 +270,12 @@ const AuthoritiesPage = () => {
               handleChooseRow={handleChooseRow}
               columns={columns}
               dataSource={dataProcess}
+              total={totalDocs}
+              setSearchOption={setSearchOption}
+              handleSearch={handleSearch}
+              seachModel={searchModel}
+              searchOption={searchOption}
+              screenName="Authorities"
             />
           </div>
         </Content>
