@@ -77,7 +77,11 @@ const EditPermission = (props) => {
         openNotification("error", "topRight", "Không tìm thấy dữ liệu");
         return;
       }
-      setPermission(res.data.permission[0]);
+      if (res.data.permission[0]) {
+        setPermission(res.data.permission[0]);
+      } else {
+        setPermission({});
+      }
     } catch (e) {
       console.log(e);
       openNotification("error", "topRight", "Không tìm thấy dữ liệu");
@@ -87,6 +91,7 @@ const EditPermission = (props) => {
   useEffect(() => {
     fetchDataRole();
   }, [props.value, fetchDataRole]);
+
   return (
     <Drawer
       title="Chỉnh sửa quyền người dùng"
@@ -137,7 +142,11 @@ const EditPermission = (props) => {
                     <h4>{screen.label}</h4>
                     <Checkbox.Group
                       options={processOption}
-                      defaultValue={permission[screen.screen]}
+                      defaultValue={
+                        permission[screen.screen]
+                          ? permission[screen.screen]
+                          : []
+                      }
                       onChange={(value) =>
                         onChangePermission(value, screen.screen)
                       }

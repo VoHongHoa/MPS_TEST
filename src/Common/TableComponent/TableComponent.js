@@ -15,6 +15,8 @@ const TableComponent = (props) => {
     columnsSetting.includes(item.dataIndex)
   );
 
+  // console.log(processColumn);
+
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       props.handleChooseRow(selectedRows);

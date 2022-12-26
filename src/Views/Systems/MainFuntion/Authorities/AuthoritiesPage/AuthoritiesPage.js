@@ -36,6 +36,7 @@ const AuthoritiesPage = () => {
     limit: 10,
   });
   const [totalDocs, setTotalDocs] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   //-------State end--------
   //Notify
   const [api, contextHolder] = notification.useNotification();
@@ -89,7 +90,7 @@ const AuthoritiesPage = () => {
   };
   // Seacch Click
   const handleSearch = async () => {
-    console.log(searchOption);
+    setIsLoading(true);
     const res = await search({
       searchOption,
       searchModel,
@@ -97,6 +98,7 @@ const AuthoritiesPage = () => {
     if (res && res.status === 200) {
       setRolesData(res.data.roles);
       setTotalDocs(res.data.totalDocs);
+      setIsLoading(false);
     } else {
       openNotification("error", "topRight", "Lỗi server");
     }
@@ -201,7 +203,12 @@ const AuthoritiesPage = () => {
           </div>
           <div className="btn-authorities-container">
             <div className="btn-container">
-              <Button type="primary" size={"large"} onClick={handleSearch}>
+              <Button
+                type="primary"
+                size={"large"}
+                onClick={handleSearch}
+                loading={isLoading}
+              >
                 Tìm kiếm
               </Button>
               <AuthoritiesAdd

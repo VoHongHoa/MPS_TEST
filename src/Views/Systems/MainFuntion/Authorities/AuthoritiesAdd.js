@@ -4,7 +4,7 @@ import { createRole } from "../../../../Service/Authorities";
 
 const AuthoritiesAdd = (props) => {
   const [api, contextHolder] = notification.useNotification();
-
+  const [isLoading, setIsLoading] = useState(false);
   const openNotification = (type, placement, message) => {
     api[type]({
       message: `Thông báo`,
@@ -14,6 +14,7 @@ const AuthoritiesAdd = (props) => {
   };
   const handleOk = async () => {
     try {
+      setIsLoading(true);
       const dataSent = {
         roleName: dataModal.roleName.trim(),
         roleCode: dataModal.roleCode.trim(),
@@ -29,6 +30,7 @@ const AuthoritiesAdd = (props) => {
         });
         props.fetchRoleData();
         props.setSelectedRows([]);
+        setIsLoading(false);
         props.handleCancel();
       } else {
         openNotification("info", "topRight", res.data.message);
@@ -90,6 +92,7 @@ const AuthoritiesAdd = (props) => {
           type={"primary"}
           size={"large"}
           key={"btn-save"}
+          loading={isLoading}
         >
           Lưu
         </Button>,

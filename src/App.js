@@ -10,7 +10,9 @@ import UnitsPage from "./Views/Products/Report/UnitsPage";
 import Login from "./Views/Login/Login";
 import UserPage from "./Views/Systems/MainFuntion/User/Page/UserPage";
 import AuthoritiesPage from "./Views/Systems/MainFuntion/Authorities/AuthoritiesPage/AuthoritiesPage";
-function App() {
+
+import React from "react";
+ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>

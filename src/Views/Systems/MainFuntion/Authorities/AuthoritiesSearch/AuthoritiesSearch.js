@@ -1,12 +1,12 @@
-import { Col, Collapse, Form, Input, Row, Select } from "antd";
-import React, { useEffect, useMemo, useState } from "react";
+import { Col, Collapse, Form, Input, Row } from "antd";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { getAllRole } from "../../../../../Service/Authorities";
+
+import SelectRoleControl from "../Controls/SelectRoleControl";
 import "./AuthoritiesSearch.scss";
 const { Panel } = Collapse;
 const AuthoritiesSearch = (props) => {
   //----------State start---------------
-  const [data, setData] = useState([]);
   const [searchData, setSearchData] = useState({
     roleName: "",
     roleCode: [],
@@ -52,29 +52,6 @@ const AuthoritiesSearch = (props) => {
     });
   };
 
-  //Fetch data
-  const fetchRoleData = async () => {
-    const res = await getAllRole();
-    if (res.status === 200 && res.data.success === true) {
-      setData(res.data.data);
-    }
-  };
-  const options = useMemo(() => {
-    if (data && data.length === 0) {
-      return [];
-    }
-    return data.map((item, index) => {
-      return {
-        label: item.roleName.toString(),
-        value: item.roleCode.toString(),
-      };
-    });
-  }, [data]);
-
-  useEffect(() => {
-    fetchRoleData();
-  }, []);
-
   return (
     <Collapse
       collapsible="header"
@@ -95,25 +72,12 @@ const AuthoritiesSearch = (props) => {
               <span>Tên vai trò</span>
               <Input size={"large"} onChange={handleOnchangeInput}></Input>
             </Col>
-            <Col
-              className={
-                checkSearchFeildAvailble("roleCode")
-                  ? "gutter-row mt-2"
-                  : "gutter-row mt-2 input-container"
-              }
-              span={12}
-            >
-              <span>Mã vai trò</span>
-              <Select
-                mode="multiple"
-                allowClear
-                size={"large"}
-                style={{ width: "100%" }}
-                placeholder="Chọn vai trò"
-                onChange={handleChangeSelect}
-                options={options}
-              />
-            </Col>
+            <SelectRoleControl
+              checkSearchFeildAvailble={checkSearchFeildAvailble}
+              onChange={handleChangeSelect}
+              mode={"tags"}
+              value={searchData.roleCode}
+            />
           </Row>
         </Form>
       </Panel>

@@ -24,8 +24,21 @@ const SettingDrawer = (props) => {
     };
     dispatch(tableSettingChange(payload));
   };
-  const defaultOption = useSelector((state) => {
+  const defaultOptionSearch = useSelector((state) => {
     const options = state.settingDrawer.searchSetting[props.screenName];
+    if (options) {
+      return options;
+    }
+    return (
+      props.options &&
+      props.options.map((item) => {
+        return item.dataIndex;
+      })
+    );
+  });
+
+  const defaultOptionTable = useSelector((state) => {
+    const options = state.settingDrawer.tableSetting[props.screenName];
     if (options) {
       return options;
     }
@@ -67,7 +80,7 @@ const SettingDrawer = (props) => {
         <span>Tùy chọn tìm kiếm</span>
         <Checkbox.Group
           options={processOption}
-          defaultValue={defaultOption}
+          defaultValue={defaultOptionSearch}
           onChange={onSearchChange}
           className="ground-checkbox-container"
         />
@@ -78,7 +91,7 @@ const SettingDrawer = (props) => {
         <Checkbox.Group
           className="ground-checkbox-container"
           options={processOption}
-          defaultValue={defaultOption}
+          defaultValue={defaultOptionTable}
           onChange={onTableSettingChange}
         />
       </div>

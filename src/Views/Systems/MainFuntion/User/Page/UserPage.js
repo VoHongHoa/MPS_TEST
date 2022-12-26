@@ -1,7 +1,7 @@
 import { Button, Layout, notification } from "antd";
 import { Content } from "antd/es/layout/layout";
 import { SettingOutlined } from "@ant-design/icons";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { openKeys, systemSiderItems } from "../../..";
 import BreadcrumbCommon from "../../../../../Common/BreadcrumbCommon/BreadcrumbCommon";
 import SiderCommon from "../../../../../Common/Sider/SiderCommon";
@@ -9,6 +9,9 @@ import SettingDrawer from "../../../../../Common/SettingDrawer/SettingDrawer";
 import { columns } from "../Model/Model";
 import UserSearch from "../Search/UserSearch";
 import TableComponent from "../../../../../Common/TableComponent/TableComponent";
+import UserAdd from "../Add/UserAdd";
+import { useEffect } from "react";
+import { getAllUser } from "../../../../../Service/User";
 
 //-----------------------------------Component Start---------------------------------------------
 const UserPage = () => {
@@ -46,6 +49,20 @@ const UserPage = () => {
     });
   };
 
+  const handleOpenModal = () => {
+    const copyState = isOpenModal;
+    copyState.add = true;
+    setIsOpenModal(copyState);
+    setAction("ADD");
+  };
+
+  const handleCancel = () => {
+    const copyState = isOpenModal;
+    copyState.add = false;
+    setIsOpenModal(copyState);
+    setAction("");
+  };
+
   const handleOpenDrawer = () => {
     setIsOpenDrawer(true);
   };
@@ -54,6 +71,44 @@ const UserPage = () => {
   };
   const handleChooseRow = (rows) => {
     setSelectedRows(rows);
+  };
+
+  const handleSearch = () => {};
+  const fetchUserData = async () => {
+    try {
+      const res = await getAllUser();
+      if (res.status === 200) {
+        setUserData(res.data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const processUserData = useMemo(() => {
+    if (userData.length === 0) {
+      return [];
+    }
+    return userData.map((item) => {
+      return {
+        key: item._id,
+        userName: item.userName,
+        userCode: item.userCode,
+        address: item.address,
+        telephone: item.telephone,
+        gender: item.gender,
+        role: item.role,
+      };
+    });
+  }, [userData]);
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const handleCoppyUser = () => {
+    const copyState = isOpenModal;
+    copyState.add = true;
+    setIsOpenModal(copyState);
+    setAction("COPPY");
   };
   return (
     <Content
@@ -85,20 +140,21 @@ const UserPage = () => {
                 Tìm kiếm
               </Button>
 
-              <Button type="primary" size={"large"}>
+              <Button type="primary" size={"large"} onClick={handleOpenModal}>
                 Thêm mới
               </Button>
-              <Button type="primary" size={"large"}>
+              <UserAdd
+                isOpenModal={isOpenModal.add}
+                handleCancel={handleCancel}
+                action={action}
+                fetchUserData={fetchUserData}
+              />
+              <Button type="primary" size={"large"} onClick={handleCoppyUser}>
                 Sao chép
               </Button>
               <Button type="primary" size={"large"}>
                 Chỉnh sửa
               </Button>
-
-              <Button type="primary" size={"large"}>
-                Phân quyền
-              </Button>
-
               <Button type="primary" size={"large"}>
                 Xóa
               </Button>
@@ -117,7 +173,7 @@ const UserPage = () => {
             <TableComponent
               handleChooseRow={handleChooseRow}
               columns={columns}
-              dataSource={[]}
+              dataSource={processUserData}
               total={totalDocs}
               setSearchOption={setSearchOption}
               seachModel={searchModel}
