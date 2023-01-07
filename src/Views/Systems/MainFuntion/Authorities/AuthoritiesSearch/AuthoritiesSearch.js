@@ -30,25 +30,25 @@ const AuthoritiesSearch = (props) => {
   };
 
   //Onchange Input && Select start
-  const handleChangeSelect = (value) => {
+  const handleChangeSelect = (value, keySelect) => {
     setSearchData({
       ...searchData,
-      roleCode: value,
+      [keySelect]: value,
     });
     props.onChange({
       ...searchData,
-      roleCode: value,
+      [keySelect]: value,
     });
   };
 
-  const handleOnchangeInput = (e) => {
+  const handleOnchangeInput = (e, keyInput) => {
     setSearchData({
       ...searchData,
-      roleName: e.target.value,
+      [keyInput]: e.target.value,
     });
     props.onChange({
       ...searchData,
-      roleName: e.target.value,
+      [keyInput]: e.target.value,
     });
   };
 
@@ -70,11 +70,15 @@ const AuthoritiesSearch = (props) => {
               span={12}
             >
               <span>Tên vai trò</span>
-              <Input size={"large"} onChange={handleOnchangeInput}></Input>
+              <Input
+                size={"large"}
+                onChange={(e) => handleOnchangeInput(e, "roleName")}
+              ></Input>
             </Col>
             <SelectRoleControl
               checkSearchFeildAvailble={checkSearchFeildAvailble}
               onChange={handleChangeSelect}
+              keySelect="roleCode"
               mode={"tags"}
               value={searchData.roleCode}
             />

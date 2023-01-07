@@ -10,8 +10,8 @@ import { columns } from "../Model/Model";
 import UserSearch from "../Search/UserSearch";
 import TableComponent from "../../../../../Common/TableComponent/TableComponent";
 import UserAdd from "../Add/UserAdd";
-import { useEffect } from "react";
-import { getAllUser } from "../../../../../Service/User";
+import { deleteUsers, searchUsers } from "../../../../../Service/User";
+import moment from "moment";
 
 //-----------------------------------Component Start---------------------------------------------
 const UserPage = () => {
@@ -24,20 +24,14 @@ const UserPage = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [userData, setUserData] = useState([]);
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
-  const [searchModel, setSearchModel] = useState({
-    userName: "",
-    userCode: "",
-    address: "",
-    telephone: "",
-    gender: "",
-    role: "",
-  });
+  const [searchModel, setSearchModel] = useState({});
   const [action, setAction] = useState("");
   const [searchOption, setSearchOption] = useState({
     page: 1,
     limit: 10,
   });
   const [totalDocs, setTotalDocs] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   //-------State end--------
   //Notify
   const [api, contextHolder] = notification.useNotification();
@@ -73,15 +67,37 @@ const UserPage = () => {
     setSelectedRows(rows);
   };
 
-  const handleSearch = () => {};
-  const fetchUserData = async () => {
+  const handleDeleteUser = async () => {
+    const dataDelete = selectedRows.map((item) => {
+      return item.key;
+    });
+    const data = {
+      dataDelete: dataDelete,
+    };
     try {
-      const res = await getAllUser();
-      if (res.status === 200) {
-        setUserData(res.data);
+      const res = await deleteUsers(data);
+      if (res && res.status === 200 && res.data.success === true) {
+        openNotification("success", "topRight", res.data.message);
+        handleSearch();
       }
     } catch (e) {
       console.log(e);
+      openNotification("error", "topRight", "Lỗi server");
+    }
+  };
+
+  const handleSearch = async () => {
+    setIsLoading(true);
+    const dataSearch = {
+      searchModel,
+      searchOption,
+    };
+    const res = await searchUsers(dataSearch);
+    if (res && res.status === 200 && res.data.success === true) {
+      console.log(res);
+      setUserData(res.data.users);
+      setTotalDocs(res.data.total);
+      setIsLoading(false);
     }
   };
   const processUserData = useMemo(() => {
@@ -92,23 +108,28 @@ const UserPage = () => {
       return {
         key: item._id,
         userName: item.userName,
+        displayName: item.displayName,
         userCode: item.userCode,
         address: item.address,
         telephone: item.telephone,
         gender: item.gender,
-        role: item.role,
+        roleCode: item.role,
+        createdAt: moment(item.createdAt).format("L"),
+        updatedAt: moment(item.updatedAt).format("L"),
+        createdBy: item.createdBy,
+        updatedBy: item.updatedBy,
       };
     });
   }, [userData]);
-  useEffect(() => {
-    fetchUserData();
-  }, []);
 
   const handleCoppyUser = () => {
     const copyState = isOpenModal;
     copyState.add = true;
     setIsOpenModal(copyState);
     setAction("COPPY");
+  };
+  const handleOnchangeSearchModel = (value) => {
+    setSearchModel(value);
   };
   return (
     <Content
@@ -132,11 +153,19 @@ const UserPage = () => {
           }}
         >
           <div className="search-authorities-container">
-            <UserSearch screenName="User" />
+            <UserSearch
+              screenName="User"
+              onChange={handleOnchangeSearchModel}
+            />
           </div>
           <div className="btn-authorities-container">
             <div className="btn-container">
-              <Button type="primary" size={"large"}>
+              <Button
+                type="primary"
+                size={"large"}
+                onClick={handleSearch}
+                loading={isLoading}
+              >
                 Tìm kiếm
               </Button>
 
@@ -147,7 +176,7 @@ const UserPage = () => {
                 isOpenModal={isOpenModal.add}
                 handleCancel={handleCancel}
                 action={action}
-                fetchUserData={fetchUserData}
+                fetchUserData={handleSearch}
               />
               <Button type="primary" size={"large"} onClick={handleCoppyUser}>
                 Sao chép
@@ -155,7 +184,7 @@ const UserPage = () => {
               <Button type="primary" size={"large"}>
                 Chỉnh sửa
               </Button>
-              <Button type="primary" size={"large"}>
+              <Button type="primary" size={"large"} onClick={handleDeleteUser}>
                 Xóa
               </Button>
             </div>

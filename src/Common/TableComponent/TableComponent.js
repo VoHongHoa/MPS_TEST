@@ -36,6 +36,7 @@ const TableComponent = (props) => {
           ...rowSelection,
         }}
         pagination={false}
+        className="table-content-container"
         columns={processColumn}
         dataSource={props.dataSource}
       />

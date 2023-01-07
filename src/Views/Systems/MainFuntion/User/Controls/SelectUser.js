@@ -1,14 +1,14 @@
 import { Col, Select } from "antd";
 import React, { useEffect, useMemo, useState } from "react";
-import { getAllRole } from "../../../../../Service/Authorities";
+import { getAllUser } from "../../../../../Service/User";
 
-function SelectRoleControl(props) {
+function SelectUser(props) {
   const [data, setData] = useState([]);
   //Fetch data
   const fetchRoleData = async () => {
-    const res = await getAllRole();
+    const res = await getAllUser();
     if (res.status === 200 && res.data.success === true) {
-      setData(res.data.data);
+      setData(res.data.users);
     }
   };
   const options = useMemo(() => {
@@ -17,8 +17,8 @@ function SelectRoleControl(props) {
     }
     return data.map((item, index) => {
       return {
-        label: item.roleName.toString(),
-        value: item.roleCode.toString(),
+        label: item.userName.toString(),
+        value: item._id.toString(),
       };
     });
   }, [data]);
@@ -39,13 +39,13 @@ function SelectRoleControl(props) {
       }
       span={12}
     >
-      <span>Mã vai trò</span>
+      <span>{props.title}</span>
       <Select
         mode={props.mode ? props.mode : ""}
         allowClear
         size={"large"}
         style={{ width: "100%" }}
-        placeholder="Chọn vai trò"
+        placeholder="Người dùng"
         onChange={handleChangeSelect}
         options={options}
         value={props.value}
@@ -54,4 +54,4 @@ function SelectRoleControl(props) {
   );
 }
 
-export default SelectRoleControl;
+export default SelectUser;

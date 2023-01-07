@@ -1,7 +1,11 @@
 export const columns = [
   {
-    title: "Tên Người dùng",
+    title: "Tên đăng nhập",
     dataIndex: "userName",
+  },
+  {
+    title: "Tên hiển thị",
+    dataIndex: "displayName",
   },
   {
     title: "Mã người dùng",
@@ -21,6 +25,22 @@ export const columns = [
   },
   {
     title: "Vai trò",
-    dataIndex: "role",
+    dataIndex: "roleCode",
+  },
+  {
+    title: "Ngày tạo",
+    dataIndex: "createdAt",
+  },
+  {
+    title: "Ngày cập nhập",
+    dataIndex: "updatedAt",
+  },
+  {
+    title: "Người cập nhập",
+    dataIndex: "updatedBy",
+  },
+  {
+    title: "Người tạo",
+    dataIndex: "createdBy",
   },
 ];

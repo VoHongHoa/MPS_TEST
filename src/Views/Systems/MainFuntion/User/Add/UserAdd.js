@@ -54,6 +54,7 @@ const UserAdd = (props) => {
     try {
       const dataObj = {
         userName: dataModal.userName.trim(),
+        displayName: dataModal.displayName.trim(),
         userCode: dataModal.userCode.trim(),
         address: dataModal.address.trim(),
         telephone: dataModal.telephone.trim(),
@@ -90,6 +91,7 @@ const UserAdd = (props) => {
   const handleCloseModal = () => {
     setDataModal({
       userName: "",
+      displayName: "",
       userCode: "",
       role: "",
       address: "",
@@ -129,10 +131,18 @@ const UserAdd = (props) => {
       <Form>
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <Col className="gutter-row mt-2" span={12}>
-            <span>Tên người dùng</span>
+            <span>Tên đăng nhập</span>
             <Input
               value={dataModal.userName}
               onChange={(e) => handleOnchangeInput(e, "userName")}
+              size={"large"}
+            ></Input>
+          </Col>
+          <Col className="gutter-row mt-2" span={12}>
+            <span>Tên hiển thị</span>
+            <Input
+              value={dataModal.displayName}
+              onChange={(e) => handleOnchangeInput(e, "displayName")}
               size={"large"}
             ></Input>
           </Col>

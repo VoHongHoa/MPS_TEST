@@ -14,6 +14,7 @@ import SettingDrawer from "../../../../../Common/SettingDrawer/SettingDrawer";
 import { columns } from "../Model/Model";
 import AuthoritiesSearch from "../AuthoritiesSearch/AuthoritiesSearch";
 import EditPermission from "../AuthoritiesEdit/EditPermission";
+import moment from "moment/moment";
 //-----------------------------------Component Start---------------------------------------------
 const AuthoritiesPage = () => {
   //-------------State----------------
@@ -135,6 +136,10 @@ const AuthoritiesPage = () => {
         key: item._id,
         roleName: item.roleName,
         roleCode: item.roleCode,
+        createdAt: moment(item.createdAt).format("L"),
+        createdBy: item.CreateUserObject?.userName,
+        updatedAt: moment(item.updatedAt).format("L"),
+        updatedBy: item.UpdateUserObject?.userName,
       };
     });
   }, [rolesData]);

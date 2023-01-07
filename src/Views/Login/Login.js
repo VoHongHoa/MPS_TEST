@@ -1,31 +1,79 @@
-import { Button, Input } from "antd";
-import React, { useState } from "react";
+import { Button, Input, notification } from "antd";
+import React, { useCallback, useState } from "react";
 import {
   UserOutlined,
   EyeTwoTone,
   EyeInvisibleOutlined,
   LockOutlined,
+  FacebookOutlined,
 } from "@ant-design/icons";
 import "./Login.scss";
+import { signIn } from "../../Service/User";
+import { loginFailed, loginSuccess, loginFb } from "../../redux/userSlice";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useInitFbSDK } from "../../CustomHook/FBHook";
 const Login = () => {
+  const isFbSDKInitialized = useInitFbSDK();
   const [dataLogin, setDataLogin] = useState({
     userName: "",
     password: "",
     code: "",
   });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [api, contextHolder] = notification.useNotification();
+  const [userAccessToken, setFbUserAccessToken] = useState();
+  const openNotification = useCallback(
+    (type, placement, message) => {
+      api[type]({
+        message: `Thông báo`,
+        description: message,
+        placement,
+      });
+    },
+    [api]
+  );
   const handleOnchangeInput = (e, keyInput) => {
-    console.log(e);
     const data = e.target.value.trim();
     setDataLogin({
       ...dataLogin,
       [keyInput]: data,
     });
   };
-  const handleBtnLoginClick = () => {
-    console.log(dataLogin);
+
+  const logInToFB = React.useCallback(() => {
+    try {
+      window.FB.login((response) => {
+        console.log("Check res login", response);
+        if (response && response.status === "connected") {
+          dispatch(loginFb(response));
+          setFbUserAccessToken(response.authResponse.accessToken);
+        }
+      });
+    } catch (e) {
+      console.log(e);
+      openNotification("error", "topRight", "Lỗi server");
+    }
+  }, []);
+
+  const handleBtnLoginClick = async () => {
+    try {
+      const res = await signIn(dataLogin);
+      if (res && res.status === 200 && res.data.success === true) {
+        dispatch(loginSuccess(res.data.user));
+        navigate("/dash");
+      } else {
+        openNotification("error", "topRight", res.data.message);
+      }
+    } catch (e) {
+      console.log(e);
+      openNotification("error", "topRight", "Lỗi server");
+    }
   };
   return (
     <div className="login-container">
+      {contextHolder}
       <h1>Đăng nhập</h1>
       <Input
         size="large"
@@ -59,6 +107,13 @@ const Login = () => {
           onClick={() => handleBtnLoginClick()}
         >
           Đăng nhập
+        </Button>
+      </div>
+
+      <div className="other-action-container">
+        <span>Hoặc</span>
+        <Button size="large" type="primary" onClick={() => logInToFB()}>
+          Đăng nhập FB
         </Button>
       </div>
     </div>

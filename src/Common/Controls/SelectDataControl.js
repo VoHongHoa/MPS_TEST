@@ -1,17 +1,17 @@
 import { Col, Select } from "antd";
 import React from "react";
 
-const SelectGender = (props) => {
-  const options = [
-    {
-      label: "Nam",
-      value: "1",
-    },
-    {
-      label: "Nữ",
-      value: "0",
-    },
-  ];
+function SelectDataControl(props) {
+  //   const options = [
+  //     {
+  //       label: "Nam",
+  //       value: "1",
+  //     },
+  //     {
+  //       label: "Nữ",
+  //       value: "0",
+  //     },
+  //   ];
   const handleChangeSelect = (value) => {
     props.onChange(value, props.keySelect);
   };
@@ -25,19 +25,19 @@ const SelectGender = (props) => {
       }
       span={12}
     >
-      <span>Giới tính</span>
+      <span>{props.title}</span>
       <Select
         mode={props.mode ? props.mode : ""}
         allowClear
         size={"large"}
         style={{ width: "100%" }}
-        placeholder="Chọn vai trò"
+        placeholder={props.placeholder ? props.placeholder : "Nhấp chọn"}
         onChange={handleChangeSelect}
-        options={options}
+        options={props.options}
         value={props.value}
       />
     </Col>
   );
-};
+}
 
-export default SelectGender;
+export default SelectDataControl;

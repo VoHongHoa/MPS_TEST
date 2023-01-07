@@ -1,19 +1,16 @@
-import { Col, Collapse, Form, Input, Row, Select } from "antd";
-import React, { useEffect, useMemo, useState } from "react";
+import { Col, Collapse, Form, Input, Row } from "antd";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { getAllRole } from "../../../../../Service/Authorities";
+import DatePickerControl from "../../../../../Common/Controls/DatePickerControl";
+import RangePickerControl from "../../../../../Common/Controls/RangePickerControl";
+import SelectGender from "../../../../../Common/Controls/SelectGender";
+import SelectRoleControl from "../../Authorities/Controls/SelectRoleControl";
+import SelectUser from "../Controls/SelectUser";
 import "./UserSearch.scss";
 const { Panel } = Collapse;
 const UserSearch = (props) => {
   //----------State start---------------
-  const [data, setData] = useState([]);
-  const [searchData, setSearchData] = useState({
-    userName: "",
-    userCode: "",
-    address: "",
-    gender: "",
-    telephone: "",
-  });
+  const [searchData, setSearchData] = useState({});
   //-------------State end-----------------
 
   //--------Sate Redux start----------
@@ -30,51 +27,38 @@ const UserSearch = (props) => {
   };
 
   //Onchange Input && Select start
-  const handleChangeSelect = (value) => {
+  const handleChangeSelect = (value, keyInput) => {
     setSearchData({
       ...searchData,
-      roleCode: value,
+      [keyInput]: value,
     });
     props.onChange({
       ...searchData,
-      roleCode: value,
+      [keyInput]: value,
     });
   };
 
-  const handleOnchangeInput = (value, keyInput) => {
+  const handleOnchangeInput = (e, keyInput) => {
     setSearchData({
       ...searchData,
-      roleName: value,
+      [keyInput]: e.target.value,
     });
     props.onChange({
       ...searchData,
-      roleName: value,
+      [keyInput]: e.target.value,
     });
   };
 
-  //Fetch data
-  const fetchRoleData = async () => {
-    const res = await getAllRole();
-    if (res.status === 200 && res.data.success === true) {
-      setData(res.data.data);
-    }
-  };
-  const options = useMemo(() => {
-    if (data && data.length === 0) {
-      return [];
-    }
-    return data.map((item, index) => {
-      return {
-        label: item.roleName.toString(),
-        value: item.roleCode.toString(),
-      };
+  const handleOnchangeDate = (value, keyInput) => {
+    setSearchData({
+      ...searchData,
+      [keyInput]: value,
     });
-  }, [data]);
-
-  useEffect(() => {
-    fetchRoleData();
-  }, []);
-
+    props.onChange({
+      ...searchData,
+      [keyInput]: value,
+    });
+  };
   return (
     <Collapse
       collapsible="header"
@@ -93,28 +77,33 @@ const UserSearch = (props) => {
               span={12}
             >
               <span>Tên người dùng</span>
-              <Input size={"large"} onChange={handleOnchangeInput}></Input>
+              <Input
+                size={"large"}
+                onChange={(e) => handleOnchangeInput(e, "userName")}
+                allowClear
+              ></Input>
             </Col>
             <Col
               className={
-                checkSearchFeildAvailble("userCode")
+                checkSearchFeildAvailble("displayName")
                   ? "gutter-row mt-2"
                   : "gutter-row mt-2 input-container"
               }
               span={12}
             >
-              <span>Mã người dùng</span>
-              <Select
-                mode="multiple"
+              <span>Tên hiển thị</span>
+              <Input
+                size="large"
+                onChange={(e) => handleOnchangeInput(e, "displayName")}
                 allowClear
-                size={"large"}
-                style={{ width: "100%" }}
-                placeholder="Chọn mã người dùng"
-                onChange={handleChangeSelect}
-                options={options}
               />
             </Col>
-
+            <SelectUser
+              title="Mã người dùng"
+              onChange={handleChangeSelect}
+              checkSearchFeildAvailble={checkSearchFeildAvailble}
+              keySelect="userCode"
+            />
             <Col
               className={
                 checkSearchFeildAvailble("telephone")
@@ -124,14 +113,10 @@ const UserSearch = (props) => {
               span={12}
             >
               <span>Số điện thoại</span>
-              <Select
-                mode="multiple"
+              <Input
+                size="large"
+                onChange={(e) => handleOnchangeInput(e, "telephone")}
                 allowClear
-                size={"large"}
-                style={{ width: "100%" }}
-                placeholder="Chọn vai trò"
-                onChange={handleChangeSelect}
-                options={options}
               />
             </Col>
 
@@ -144,56 +129,48 @@ const UserSearch = (props) => {
               span={12}
             >
               <span>Địa chỉ</span>
-              <Select
-                mode="multiple"
+              <Input
+                size="large"
+                onChange={(e) => handleOnchangeInput(e, "address")}
                 allowClear
-                size={"large"}
-                style={{ width: "100%" }}
-                placeholder="Chọn vai trò"
-                onChange={handleChangeSelect}
-                options={options}
               />
             </Col>
 
-            <Col
-              className={
-                checkSearchFeildAvailble("gender")
-                  ? "gutter-row mt-2"
-                  : "gutter-row mt-2 input-container"
-              }
-              span={12}
-            >
-              <span>Giới tính</span>
-              <Select
-                mode="multiple"
-                allowClear
-                size={"large"}
-                style={{ width: "100%" }}
-                placeholder="Chọn vai trò"
-                onChange={handleChangeSelect}
-                options={options}
-              />
-            </Col>
+            <SelectGender
+              onChange={handleChangeSelect}
+              keySelect="gender"
+              checkSearchFeildAvailble={checkSearchFeildAvailble}
+            />
 
-            <Col
-              className={
-                checkSearchFeildAvailble("role")
-                  ? "gutter-row mt-2"
-                  : "gutter-row mt-2 input-container"
-              }
-              span={12}
-            >
-              <span>Vai trò</span>
-              <Select
-                mode="multiple"
-                allowClear
-                size={"large"}
-                style={{ width: "100%" }}
-                placeholder="Chọn vai trò"
-                onChange={handleChangeSelect}
-                options={options}
-              />
-            </Col>
+            <SelectRoleControl
+              checkSearchFeildAvailble={checkSearchFeildAvailble}
+              onChange={handleChangeSelect}
+              keySelect="roleCode"
+            />
+            <SelectUser
+              title="Người tạo"
+              onChange={handleChangeSelect}
+              checkSearchFeildAvailble={checkSearchFeildAvailble}
+              keySelect="createdBy"
+            />
+            <SelectUser
+              title="Người cập nhập"
+              onChange={handleChangeSelect}
+              checkSearchFeildAvailble={checkSearchFeildAvailble}
+              keySelect="updatedBy"
+            />
+            <RangePickerControl
+              title="Ngày tạo"
+              keySelect="createdAt"
+              checkSearchFeildAvailble={checkSearchFeildAvailble}
+              onChange={handleOnchangeDate}
+            />
+            <DatePickerControl
+              title="Ngày cập nhập"
+              keySelect="updatedAt"
+              checkSearchFeildAvailble={checkSearchFeildAvailble}
+              onChange={handleOnchangeDate}
+            />
           </Row>
         </Form>
       </Panel>
