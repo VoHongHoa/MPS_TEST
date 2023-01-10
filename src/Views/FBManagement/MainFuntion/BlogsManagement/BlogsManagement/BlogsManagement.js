@@ -133,6 +133,7 @@ function BlogsManagementPage() {
         comment: item.comments.summary.total_count,
         link: item.actions[0].link,
         message: item.message,
+        post_impression_insight: item.insights.data[0].values[0].value,
         story: item.story,
         share_count: item.shares ? item.shares.count : 0,
       };

@@ -20,9 +20,15 @@ export const createImage = (pageId, page_access_token, data) => {
 //Lấy tất cả bài viết theo trang
 export const getAllFeedByPageId = (pageId, page_access_token) => {
   return axios.get(
-    `https://graph.facebook.com/${pageId}/feed?fields=actions,id,icon,created_time,message,story,shares,likes.summary(true),comments.summary(true)&access_token=${page_access_token}`
+    `https://graph.facebook.com/${pageId}/feed?fields=actions,id,icon,created_time,message,story,shares,likes.summary(true),comments.summary(true),insights.metric(post_impressions_unique)&access_token=${page_access_token}`
   );
 };
+
+// export const getAllFeedByPageId = (pageId, page_access_token) => {
+//   return axios.get(
+//     `https://graph.facebook.com/${pageId}/feed?fields=id,message,created_time,insights.metric(post_impressions_unique,post_reactions_by_type_total)&access_token=${page_access_token}`
+//   );
+// };
 //Update message cho bài viết
 export const updateMessageForPost = (postId, message, page_access_token) => {
   return axios.post(
