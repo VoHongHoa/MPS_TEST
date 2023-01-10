@@ -12,9 +12,9 @@ export const createBlog = (pageId, page_access_token, data) => {
   );
 };
 //Tạo bài viết + hình ảnh
-export const createImage = (pageId, page_access_token, data) => {
+export const createPostWithImage = (pageId, page_access_token, data) => {
   return axios.post(
-    `https://graph.facebook.com/v15.0/${pageId}/photos?access_token=${page_access_token}&message=${data.message}&url=${data.image}`
+    `https://graph.facebook.com/v15.0/${pageId}/photos?access_token=${page_access_token}&message=${data.message}&url=${data.url}`
   );
 };
 //Lấy tất cả bài viết theo trang
@@ -35,7 +35,7 @@ export const updateMessageForPost = (postId, message, page_access_token) => {
     `https://graph.facebook.com/${postId}?message=${message}&access_token=${page_access_token}`
   );
 };
-// Xóa bài biet
+// Xóa bài viet
 export const deletePosts = (postId, page_access_token) => {
   return axios.delete(
     `https://graph.facebook.com/${postId}?access_token=${page_access_token}`

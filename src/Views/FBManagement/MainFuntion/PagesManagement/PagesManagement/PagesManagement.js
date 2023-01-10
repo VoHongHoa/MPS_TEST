@@ -1,4 +1,4 @@
-import { Button, Layout, notification } from "antd";
+import { Layout, notification } from "antd";
 import { Content } from "antd/es/layout/layout";
 
 import React, { useEffect, useMemo, useState } from "react";
@@ -20,7 +20,6 @@ function PagesManagement() {
   const { userFbInfor } = useSelector((state) => state.user);
   //Notify
   const [api, contextHolder] = notification.useNotification();
-  const [seachModel, setSearchModel] = useState();
   const [searchOption, setSearchOption] = useState();
   const [selectedRows, setSelectedRows] = useState();
   const [pagesData, setPagesData] = useState([]);
@@ -31,8 +30,6 @@ function PagesManagement() {
       placement,
     });
   };
-  //action search
-  const handleSearch = () => {};
   //Onchange selectedRows
   const handleChooseRow = (rows) => {
     setSelectedRows(rows);
@@ -88,25 +85,6 @@ function PagesManagement() {
             minHeight: 280,
           }}
         >
-          <div className="btn-authorities-container">
-            <div className="btn-container">
-              <Button type="primary" size={"large"}>
-                Tìm kiếm
-              </Button>
-              <Button type="primary" size={"large"}>
-                Thêm mới
-              </Button>
-              <Button type="primary" size={"large"}>
-                Xem
-              </Button>
-              <Button type="primary" size={"large"}>
-                Chỉnh sửa
-              </Button>
-              <Button type="primary" size={"large"}>
-                Xóa
-              </Button>
-            </div>
-          </div>
           <h1> Danh sách các trang</h1>
           <div className="table-authorities-container">
             <TableComponent

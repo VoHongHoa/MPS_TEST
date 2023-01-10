@@ -12,9 +12,6 @@ import {
   deletePosts,
   getAllFeedByPageId,
   getAllPage,
-  getCommentPost,
-  getPost,
-  getPostInsight,
 } from "../../../../../Service/FBManagement";
 import ModalAddNewBlog from "../ModalAddNewFeed/ModalAddNewBlog";
 import ModalAddNewImage from "../ModalAddNewImage/ModalAddNewImage";
@@ -22,6 +19,7 @@ import ModalEditMessagePost from "../ModalEditMessagePost/ModalEditMessagePost";
 import ModalViewPostDetail from "../ModalViewPostDetail/ModalViewPostDetail";
 import { columns } from "../Model/Model";
 
+import "./BlogsManagement.scss";
 //-----------------------------------Component Start---------------------------------------------
 function BlogsManagementPage() {
   const breadcrumbItem = ["Quản lý FB", "Quản lý trang"];
@@ -32,9 +30,7 @@ function BlogsManagementPage() {
   const [pagesData, setPagesData] = useState([]);
   const [feedsData, setFeedsData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [seachModel, setSearchModel] = useState();
   const [selectedPageId, setSelectedPageId] = useState();
-  const [detailPost, setDetailPost] = useState([]);
   const [isOpenModal, setIsOpenModal] = useState({
     feedModal: false,
     imageModal: false,
@@ -52,8 +48,6 @@ function BlogsManagementPage() {
       placement,
     });
   };
-  //action search
-  const handleSearch = () => {};
   //Onchange selectedRows
   const handleChooseRow = (rows) => {
     setSelectedRows(rows);
@@ -272,31 +266,7 @@ function BlogsManagementPage() {
       );
       return;
     }
-
     try {
-      // const resInsight = await getPostInsight(
-      //   selectedRows[0].id,
-      //   page.access_token
-      // );
-      // const resComment = await getCommentPost(
-      //   selectedRows[0].id,
-      //   page.access_token
-      // );
-      // if (
-      //   resInsight &&
-      //   resInsight.status === 200 &&
-      //   resComment.status === 200
-      // ) {
-      //   let reactTotal = 0;
-      //   resInsight.data.data.forEach((item) => {
-      //     reactTotal += item.values[0].value;
-      //   });
-      //   const dataInsight = [
-      //     { title: "Lượt bày tỏ cảm xúc", value: reactTotal },
-      //     { title: "Lượt bình luận", value: resComment.data.data.length },
-      //   ];
-      //   setDetailPost(dataInsight);
-      // }
       handleOpenModal("VIEW");
     } catch (e) {
       console.log(e);
@@ -342,88 +312,87 @@ function BlogsManagementPage() {
             />
           </div>
           <div className="btn-authorities-container">
-            <div className="btn-container">
-              <Button
-                type="primary"
-                size={"large"}
-                loading={isLoading}
-                onClick={() => handleClickViewBtn()}
-              >
-                Tìm kiếm
-              </Button>
-              <Button
-                type="primary"
-                size={"large"}
-                onClick={() => handleClickViewDetailBtn()}
-              >
-                Xem
-              </Button>
-              {selectedRows && selectedRows.length === 1 && (
-                <ModalViewPostDetail
-                  isOpenModal={isOpenModal.viewModal}
-                  handleCancel={handleCancel}
-                  pageId={selectedPageId}
-                  post={selectedRows[0]}
-                  // detailPost={detailPost}
-                  handleClickViewBtn={handleClickViewBtn}
-                  page={page}
-                />
-              )}
-
-              <Button
-                type="primary"
-                size={"large"}
-                onClick={() => handleOpenModal("FEED")}
-              >
-                Thêm Bài Feed
-              </Button>
-              <ModalAddNewBlog
-                isOpenModal={isOpenModal.feedModal}
+            <Button
+              type="primary"
+              size={"large"}
+              loading={isLoading}
+              onClick={() => handleClickViewBtn()}
+            >
+              Tìm kiếm
+            </Button>
+            <Button
+              type="primary"
+              size={"large"}
+              onClick={() => handleClickViewDetailBtn()}
+            >
+              Xem
+            </Button>
+            {selectedRows && selectedRows.length === 1 && (
+              <ModalViewPostDetail
+                isOpenModal={isOpenModal.viewModal}
                 handleCancel={handleCancel}
                 pageId={selectedPageId}
+                post={selectedRows[0]}
+                // detailPost={detailPost}
                 handleClickViewBtn={handleClickViewBtn}
                 page={page}
               />
-              <Button
-                type="primary"
-                size={"large"}
-                onClick={() => handleOpenModal("IMAGE")}
-              >
-                Đăng ảnh
-              </Button>
-              <ModalAddNewImage
-                isOpenModal={isOpenModal.imageModal}
+            )}
+
+            <Button
+              type="primary"
+              size={"large"}
+              onClick={() => handleOpenModal("FEED")}
+            >
+              Thêm Bài Feed
+            </Button>
+            <ModalAddNewBlog
+              isOpenModal={isOpenModal.feedModal}
+              handleCancel={handleCancel}
+              pageId={selectedPageId}
+              handleClickViewBtn={handleClickViewBtn}
+              page={page}
+            />
+            <Button
+              type="primary"
+              size={"large"}
+              onClick={() => handleOpenModal("IMAGE")}
+            >
+              Đăng ảnh
+            </Button>
+            <ModalAddNewImage
+              isOpenModal={isOpenModal.imageModal}
+              handleCancel={handleCancel}
+              pageId={selectedPageId}
+              handleClickViewBtn={handleClickViewBtn}
+              page={page}
+            />
+            <Button type="primary" size={"large"}>
+              Thêm Video
+            </Button>
+
+            <Button type="primary" size={"large"} onClick={handleEditPost}>
+              Chỉnh sửa
+            </Button>
+            {selectedRows && selectedRows.length === 1 && (
+              <ModalEditMessagePost
+                isOpenModal={isOpenModal.editModal}
                 handleCancel={handleCancel}
                 pageId={selectedPageId}
+                post={selectedRows[0]}
+                handleClickViewBtn={handleClickViewBtn}
                 page={page}
               />
-              <Button type="primary" size={"large"}>
-                Thêm Video
-              </Button>
+            )}
 
-              <Button type="primary" size={"large"} onClick={handleEditPost}>
-                Chỉnh sửa
-              </Button>
-              {selectedRows && selectedRows.length === 1 && (
-                <ModalEditMessagePost
-                  isOpenModal={isOpenModal.editModal}
-                  handleCancel={handleCancel}
-                  pageId={selectedPageId}
-                  post={selectedRows[0]}
-                  handleClickViewBtn={handleClickViewBtn}
-                  page={page}
-                />
-              )}
-
-              <Button
-                type="primary"
-                size={"large"}
-                onClick={handleDeletePosts}
-                loading={isLoading}
-              >
-                Xóa
-              </Button>
-            </div>
+            <Button
+              type="primary"
+              size={"large"}
+              onClick={handleDeletePosts}
+              loading={isLoading}
+            >
+              Xóa
+            </Button>
           </div>
           <h1> Danh sách các bài viết</h1>
           <div className="table-authorities-container">

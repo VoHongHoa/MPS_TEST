@@ -10,15 +10,11 @@ import {
 } from "antd";
 import React, { useEffect, useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
-import {
-  createBlog,
-  uploadFileToFBApp,
-} from "../../../../../Service/FBManagement";
+import { createPostWithImage } from "../../../../../Service/FBManagement";
 import { useSelector } from "react-redux";
 function ModalAddNewImage(props) {
   const [api, contextHolder] = notification.useNotification();
   const [isLoading, setIsLoading] = useState(false);
-  const [fileList, setFileList] = useState([]);
 
   const { userFbInfor } = useSelector((state) => state.user);
 
@@ -31,7 +27,7 @@ function ModalAddNewImage(props) {
   };
   const [dataModal, setDataModal] = useState({
     message: "",
-    link: "",
+    url: "",
   });
   const handleOnchangeInput = (e, keyInput) => {
     setDataModal({
@@ -41,28 +37,26 @@ function ModalAddNewImage(props) {
   };
   const handleOk = async () => {
     //setIsLoading(true);
-
-    console.log(props);
-    // try {
-    //   const res = await createBlog(
-    //     props.pageId,
-    //     props.page.access_token,
-    //     dataModal
-    //   );
-    //   if (res && res.status === 200) {
-    //     setIsLoading(false);
-    //     setDataModal({
-    //       image: "",
-    //       link: "",
-    //       message: "",
-    //     });
-    //     openNotification("success", "topRight", "Đăng bài viết thành công");
-    //     props.handleCancel();
-    //   }
-    // } catch (e) {
-    //   console.log(e);
-    //   openNotification("error", "topRight", "Lỗi server");
-    // }
+    try {
+      const res = await createPostWithImage(
+        props.pageId,
+        props.page.access_token,
+        dataModal
+      );
+      if (res && res.status === 200) {
+        setIsLoading(false);
+        setDataModal({
+          url: "",
+          message: "",
+        });
+        openNotification("success", "topRight", "Đăng bài viết thành công");
+        props.handleClickViewBtn();
+        props.handleCancel("IMAGE");
+      }
+    } catch (e) {
+      console.log(e);
+      openNotification("error", "topRight", "Hiện không thể đăng bài viết");
+    }
   };
   const uploadButton = (
     <div>
@@ -73,39 +67,39 @@ function ModalAddNewImage(props) {
 
   const handlePreview = () => {};
 
-  const handleOnchangeImage = async ({ fileList }) => {
-    setFileList(fileList);
-    console.log("check file", fileList);
-    const appId = process.env.REACT_APP_FB_ID || "667792575026311";
-    const res = await uploadFileToFBApp(
-      appId,
-      fileList[0],
-      userFbInfor.authResponse.accessToken
-    );
-    console.log("check response", res);
+  // const handleOnchangeImage = async ({ fileList }) => {
+  //   setFileList(fileList);
+  //   console.log("check file", fileList);
+  //   const appId = process.env.REACT_APP_FB_ID || "667792575026311";
+  //   const res = await uploadFileToFBApp(
+  //     appId,
+  //     fileList[0],
+  //     userFbInfor.authResponse.accessToken
+  //   );
+  //   console.log("check response", res);
 
-    // fileList.forEach((file) => {
-    //   const storageRef = ref(storage, `/MPS_FB_Image/${file.name}`);
-    //   const uploadTask = uploadBytesResumable(storageRef, file.originFileObj);
-    //   uploadTask.on(
-    //     "state_changed",
-    //     (snapshot) => {},
-    //     (err) => {
-    //       console.log(err);
-    //     },
-    //     () => {
-    //       getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
-    //         const dataBlog = {
-    //           message: dataModal.message,
-    //           link: dataModal.link,
-    //           image: url,
-    //         };
-    //         setDataModal(dataBlog);
-    //       });
-    //     }
-    //   );
-    // });
-  };
+  //   // fileList.forEach((file) => {
+  //   //   const storageRef = ref(storage, `/MPS_FB_Image/${file.name}`);
+  //   //   const uploadTask = uploadBytesResumable(storageRef, file.originFileObj);
+  //   //   uploadTask.on(
+  //   //     "state_changed",
+  //   //     (snapshot) => {},
+  //   //     (err) => {
+  //   //       console.log(err);
+  //   //     },
+  //   //     () => {
+  //   //       getDownloadURL(uploadTask.snapshot.ref).then(async (url) => {
+  //   //         const dataBlog = {
+  //   //           message: dataModal.message,
+  //   //           link: dataModal.link,
+  //   //           image: url,
+  //   //         };
+  //   //         setDataModal(dataBlog);
+  //   //       });
+  //   //     }
+  //   //   );
+  //   // });
+  // };
   return (
     <Modal
       title={"Thêm ảnh mới"}
@@ -143,6 +137,14 @@ function ModalAddNewImage(props) {
             ></Input>
           </Col>
           <Col className="gutter-row mt-2" span={12}>
+            <span>Link của hình ảnh</span>
+            <Input
+              value={dataModal.url}
+              onChange={(e) => handleOnchangeInput(e, "url")}
+              size={"large"}
+            ></Input>
+          </Col>
+          {/* <Col className="gutter-row mt-2" span={12}>
             <span>Hình ảnh</span>
             <Upload
               action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
@@ -153,7 +155,7 @@ function ModalAddNewImage(props) {
             >
               {fileList.length >= 4 ? null : uploadButton}
             </Upload>
-          </Col>
+          </Col> */}
         </Row>
       </Form>
     </Modal>
