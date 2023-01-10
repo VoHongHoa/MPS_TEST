@@ -20,13 +20,41 @@ export const createImage = (pageId, page_access_token, data) => {
 //Lấy tất cả bài viết theo trang
 export const getAllFeedByPageId = (pageId, page_access_token) => {
   return axios.get(
-    `https://graph.facebook.com/${pageId}/feed?access_token=${page_access_token}`
+    `https://graph.facebook.com/${pageId}/feed?fields=actions,id,icon,created_time,message,story,shares,likes.summary(true),comments.summary(true)&access_token=${page_access_token}`
+  );
+};
+//Update message cho bài viết
+export const updateMessageForPost = (postId, message, page_access_token) => {
+  return axios.post(
+    `https://graph.facebook.com/${postId}?message=${message}&access_token=${page_access_token}`
+  );
+};
+// Xóa bài biet
+export const deletePosts = (postId, page_access_token) => {
+  return axios.delete(
+    `https://graph.facebook.com/${postId}?access_token=${page_access_token}`
   );
 };
 //Upload Image to App
-
 export const uploadFileToFBApp = (appId, file, user_access_token) => {
   return axios.post(
     `https://graph.facebook.com/${appId}/uploads?file_length=${file.size}&file_type=${file.type}&access_token=${user_access_token}`
+  );
+};
+//Get post
+export const getPost = (postId, page_access_token) => {
+  return axios.get(
+    `https://graph.facebook.com/${postId}?fields=name&access_token=${page_access_token}`
+  );
+};
+//Get post-insight
+export const getPostInsight = (postId, page_access_token) => {
+  return axios.get(`https://graph.facebook.com/${postId}/insights?metric=post_reactions_like_total,post_reactions_love_total,post_reactions_wow_total,post_reactions_haha_total,post_reactions_sorry_total
+  &access_token=${page_access_token}`);
+};
+//Get post-comment
+export const getCommentPost = (postId, page_access_token) => {
+  return axios.get(
+    `https://graph.facebook.com/${postId}/comments?access_token=${page_access_token}`
   );
 };

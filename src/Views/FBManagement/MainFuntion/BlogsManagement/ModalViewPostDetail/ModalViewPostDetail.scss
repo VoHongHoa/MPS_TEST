@@ -1,0 +1,42 @@
+.view-detail-post-container {
+  .overview-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: 10px;
+    .post-image-container {
+      width: 350px;
+      height: 300px;
+    }
+    .post-infor {
+      width: 100%;
+      .post-information-insight {
+      }
+      .post-reactions-insight {
+        display: flex;
+        flex-direction: row;
+        gap: 50px;
+        .detail-insight {
+          width: fit-content;
+          background-color: whitesmoke;
+          padding: 10px;
+          border-radius: 5px;
+        }
+      }
+    }
+  }
+  .effect-container {
+    .title {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .grid-effect-container {
+      display: grid;
+      grid-template-columns: auto auto auto;
+      .grid-content {
+        height: 300px;
+        border: 1px solid red;
+      }
+    }
+  }
+}

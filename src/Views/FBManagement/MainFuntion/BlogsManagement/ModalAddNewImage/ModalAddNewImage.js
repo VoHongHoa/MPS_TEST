@@ -40,29 +40,29 @@ function ModalAddNewImage(props) {
     });
   };
   const handleOk = async () => {
-    setIsLoading(true);
+    //setIsLoading(true);
 
-    console.log(dataModal);
-    try {
-      const res = await createBlog(
-        props.pageId,
-        props.page.access_token,
-        dataModal
-      );
-      if (res && res.status === 200) {
-        setIsLoading(false);
-        setDataModal({
-          image: "",
-          link: "",
-          message: "",
-        });
-        openNotification("success", "topRight", "Đăng bài viết thành công");
-        props.handleCancel();
-      }
-    } catch (e) {
-      console.log(e);
-      openNotification("error", "topRight", "Lỗi server");
-    }
+    console.log(props);
+    // try {
+    //   const res = await createBlog(
+    //     props.pageId,
+    //     props.page.access_token,
+    //     dataModal
+    //   );
+    //   if (res && res.status === 200) {
+    //     setIsLoading(false);
+    //     setDataModal({
+    //       image: "",
+    //       link: "",
+    //       message: "",
+    //     });
+    //     openNotification("success", "topRight", "Đăng bài viết thành công");
+    //     props.handleCancel();
+    //   }
+    // } catch (e) {
+    //   console.log(e);
+    //   openNotification("error", "topRight", "Lỗi server");
+    // }
   };
   const uploadButton = (
     <div>

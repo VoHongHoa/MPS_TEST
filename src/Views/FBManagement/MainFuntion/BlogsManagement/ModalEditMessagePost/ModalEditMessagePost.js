@@ -1,7 +1,7 @@
 import { Button, Col, Form, Input, Modal, notification, Row } from "antd";
 import React, { useState } from "react";
-import { createBlog } from "../../../../../Service/FBManagement";
-function ModalAddNewBlog(props) {
+import { updateMessageForPost } from "../../../../../Service/FBManagement";
+function ModalEditMessagePost(props) {
   const [api, contextHolder] = notification.useNotification();
   const [isLoading, setIsLoading] = useState(false);
   const openNotification = (type, placement, message) => {
@@ -12,8 +12,8 @@ function ModalAddNewBlog(props) {
     });
   };
   const [dataModal, setDataModal] = useState({
-    message: "",
-    link: "",
+    id: props.post?.id,
+    message: props.post?.message,
   });
   const handleOnchangeInput = (e, keyInput) => {
     setDataModal({
@@ -22,22 +22,24 @@ function ModalAddNewBlog(props) {
     });
   };
   const handleOk = async () => {
-    setIsLoading(true);
     try {
-      const res = await createBlog(
-        props.pageId,
-        props.page.access_token,
-        dataModal
+      setIsLoading(true);
+      const res = await updateMessageForPost(
+        dataModal.id,
+        dataModal.message,
+        props.page.access_token
       );
       if (res && res.status === 200) {
         setIsLoading(false);
-        setDataModal({
-          link: "",
-          message: "",
-        });
-        openNotification("success", "topRight", "Đăng bài viết thành công");
+        props.handleCancel("EDIT");
         props.handleClickViewBtn();
-        props.handleCancel("FEED");
+        openNotification("success", "topRight", "Cập nhập bài viết thành công");
+      } else {
+        openNotification(
+          "error",
+          "topRight",
+          "Cập nhập bài viết không thành công"
+        );
       }
     } catch (e) {
       console.log(e);
@@ -47,13 +49,13 @@ function ModalAddNewBlog(props) {
   };
   return (
     <Modal
-      title={"Thêm mới bài viết"}
+      title={"Chỉnh sửa bài viết"}
       open={props.isOpenModal}
-      onCancel={() => props.handleCancel("FEED")}
+      onCancel={() => props.handleCancel("EDIT")}
       width="60%"
       footer={[
         <Button
-          onClick={() => props.handleCancel("FEED")}
+          onClick={() => props.handleCancel("EDIT")}
           size={"large"}
           key={"btn-cancel"}
         >
@@ -74,18 +76,20 @@ function ModalAddNewBlog(props) {
       <Form>
         <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
           <Col className="gutter-row mt-2" span={12}>
+            <span>ID bài viết</span>
+            <Input
+              value={dataModal.id}
+              onChange={(e) => handleOnchangeInput(e, "message")}
+              size={"large"}
+              readOnly
+              disabled
+            ></Input>
+          </Col>
+          <Col className="gutter-row mt-2" span={12}>
             <span>Nội dung</span>
             <Input
               value={dataModal.message}
               onChange={(e) => handleOnchangeInput(e, "message")}
-              size={"large"}
-            ></Input>
-          </Col>
-          <Col className="gutter-row mt-2" span={12}>
-            <span>Link đính kèm</span>
-            <Input
-              value={dataModal.link}
-              onChange={(e) => handleOnchangeInput(e, "link")}
               size={"large"}
             ></Input>
           </Col>
@@ -95,4 +99,4 @@ function ModalAddNewBlog(props) {
   );
 }
 
-export default ModalAddNewBlog;
+export default ModalEditMessagePost;

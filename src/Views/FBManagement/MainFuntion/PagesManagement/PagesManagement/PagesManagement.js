@@ -57,6 +57,7 @@ function PagesManagement() {
     }
     return pagesData.map((item) => {
       return {
+        key: item.id,
         name: item.name,
         id: item.id,
         access_token: item.access_token,
